@@ -109,11 +109,21 @@ controller:
             oic:
               clientId: "${OIDC_CLIENT_ID}"
               clientSecret: "${OIDC_CLIENT_SECRET}"
+              wellKnownOpenIDConfigurationUrl: "${OIDC_ISSUER_URL}/.well-known/openid-configuration"
+              tokenServerUrl: "${OIDC_ISSUER_URL}/token"
+              authorizationServerUrl: "${OIDC_ISSUER_URL}/authorize"
+              userInfoServerUrl: "${OIDC_ISSUER_URL}/userinfo"
+              userNameField: "email"
+              tokenAuthEnabled: false
+              emailField: "email"
+              fullNameFieldName: "name"
+              groupsFieldName: "groups"
               disableSslVerification: false
-              serverConfiguration:
-                google:
-                  authorizationEndpoint: "https://accounts.google.com/o/oauth2/auth"
-                  tokenEndpoint: "https://oauth2.googleapis.com/token"
-                  userInfoEndpoint: "https://openidconnect.googleapis.com/v1/userinfo"
+              logoutFromOpenidProvider: true
+              postLogoutRedirectUrl: ""
+              escapeHatchEnabled: false
+              escapeHatchUsername: ""
+              escapeHatchSecret: ""
+              escapeHatchGroup: ""
 
 
