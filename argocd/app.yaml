@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: jenkins
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://charts.jenkins.io
+    chart: jenkins
+    targetRevision: latest
+    helm:
+      values: |
+        controller:
+          adminPassword: admin
+          installPlugins:
+            - kubernetes:latest
+            - workflow-aggregator:latest
+            - configuration-as-code:latest
+            # ...add more as needed from your plugins.txt
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: jenkins
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
