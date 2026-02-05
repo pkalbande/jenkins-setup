@@ -86,6 +86,7 @@ persistence:
   size: 8Gi
 rbac:
   create: true
+  readSecrets: true
 
 # JCasC configuration
 controller:
@@ -108,12 +109,6 @@ controller:
             oic:
               clientId: "${OIDC_CLIENT_ID}"
               clientSecret: "${OIDC_CLIENT_SECRET}"
-              tokenServerUrl: "https://oauth2.googleapis.com/token"
-              authorizationServerUrl: "https://accounts.google.com/o/oauth2/auth"
-              userInfoServerUrl: "https://openidconnect.googleapis.com/v1/userinfo"
-              scopes: "openid email profile"
-              endSessionEndpoint: "https://accounts.google.com/logout"
-              redirectOnFinishLogin: "http://localhost:6060/securityRealm/finishLogin"
               disableSslVerification: false
 
 
