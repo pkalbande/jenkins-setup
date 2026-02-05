@@ -111,8 +111,9 @@ controller:
               clientSecret: "${OIDC_CLIENT_SECRET}"
               disableSslVerification: false
               serverConfiguration:
-                authorizationEndpoint: "https://accounts.google.com/o/oauth2/auth"
-                tokenEndpoint: "https://oauth2.googleapis.com/token"
-                userInfoEndpoint: "https://openidconnect.googleapis.com/v1/userinfo"
+                google:
+                  authorizationEndpoint: "https://accounts.google.com/o/oauth2/auth"
+                  tokenEndpoint: "https://oauth2.googleapis.com/token"
+                  userInfoEndpoint: "https://openidconnect.googleapis.com/v1/userinfo"
 
 
