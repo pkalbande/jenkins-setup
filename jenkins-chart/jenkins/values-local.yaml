@@ -86,3 +86,34 @@ persistence:
   size: 8Gi
 rbac:
   create: true
+
+# JCasC configuration
+controller:
+  containerEnv:
+    - name: OIDC_CLIENT_ID
+      valueFrom:
+        secretKeyRef:
+          name: jenkins-google-oauth
+          key: clientId
+    - name: OIDC_CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: jenkins-google-oauth
+          key: clientSecret
+  JCasC:
+    configScripts:
+      google-sso: |
+        jenkins:
+          securityRealm:
+            oic:
+              clientId: "${OIDC_CLIENT_ID}"
+              clientSecret: "${OIDC_CLIENT_SECRET}"
+              tokenServerUrl: "https://oauth2.googleapis.com/token"
+              authorizationServerUrl: "https://accounts.google.com/o/oauth2/auth"
+              userInfoServerUrl: "https://openidconnect.googleapis.com/v1/userinfo"
+              scopes: "openid email profile"
+              endSessionEndpoint: "https://accounts.google.com/logout"
+              redirectOnFinishLogin: "http://localhost:6060/securityRealm/finishLogin"
+              disableSslVerification: false
+
+
