@@ -13,13 +13,12 @@ spec:
       - CreateNamespace=true
       - ServerSideApply=true
   sources:
-    - repoURL: https://github.com/pkalbande/jenkins-setup.git
-      targetRevision: main
-      chart: jenkins
-      path: jenkins-chart/jenkins
-      helm:
-        valueFiles:
-          - values-local.yaml
-    - repoURL: https://github.com/pkalbande/jenkins-setup.git
-      targetRevision: main
-      ref: values
+  - repoURL: https://github.com/pkalbande/jenkins-setup.git
+    targetRevision: main
+    path: jenkins-chart/jenkins
+    helm:
+      valueFiles:
+        - values-local.yaml
+  - repoURL: https://github.com/pkalbande/jenkins-setup.git
+    targetRevision: main
+    ref: values-local.yaml
