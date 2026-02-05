@@ -21,4 +21,4 @@ spec:
         - values-local.yaml
   - repoURL: https://github.com/pkalbande/jenkins-setup.git
     targetRevision: main
-    ref: values-local.yaml
+    ref: values-local
