@@ -44,6 +44,7 @@ agent:
       cpu: 500m
       memory: 1Gi
 persistence:
-  enabled: false
+  enabled: true
+  size: 8Gi
 rbac:
   create: true
