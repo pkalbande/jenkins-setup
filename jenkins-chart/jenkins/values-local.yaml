@@ -106,7 +106,7 @@ controller:
       google-sso: |
         jenkins:
           securityRealm:
-            oic:
+            org.jenkinsci.plugins.oic.OicSecurityRealm:
               clientId: "${OIDC_CLIENT_ID}"
               clientSecret: "${OIDC_CLIENT_SECRET}"
               wellKnownOpenIDConfigurationUrl: "${OIDC_ISSUER_URL}/.well-known/openid-configuration"
