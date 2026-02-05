@@ -14,7 +14,7 @@ controller:
     - github:latest
     - docker-workflow:latest
     - credentials:latest
-    - prometheus:latest
+#    - prometheus:latest
     - email-ext:latest
     - slack:latest
     - junit:latest
