@@ -5,23 +5,21 @@ metadata:
   namespace: argocd
 spec:
   project: default
-  source:
-    repoURL: https://charts.jenkins.io
-    chart: jenkins
-    targetRevision: latest
-    helm:
-      values: |
-        controller:
-          adminPassword: admin
-          installPlugins:
-            - kubernetes:latest
-            - workflow-aggregator:latest
-            - configuration-as-code:latest
-            # ...add more as needed from your plugins.txt
   destination:
     server: https://kubernetes.default.svc
     namespace: jenkins
   syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+  sources:
+    - repoURL: https://github.com/pkalbande/jenkins-setup.git
+      targetRevision: main
+      chart: jenkins
+      path: jenkins-chart/jenkins
+      helm:
+        valueFiles:
+          - values-local.yaml
+    - repoURL: https://github.com/pkalbande/jenkins-setup.git
+      targetRevision: main
+      ref: values

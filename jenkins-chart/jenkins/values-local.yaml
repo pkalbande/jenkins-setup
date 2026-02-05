@@ -1,0 +1,49 @@
+# Basic Jenkins Helm values.yaml for local ArgoCD deployment
+
+controller:
+  admin:
+    username: admin
+    password: admin
+  serviceType: ClusterIP
+  installPlugins:
+    - kubernetes:latest
+    - workflow-aggregator:latest
+    - configuration-as-code:latest
+    - job-dsl:latest
+    - git:latest
+    - github:latest
+    - docker-workflow:latest
+    - credentials:latest
+    - prometheus:latest
+    - email-ext:latest
+    - slack:latest
+    - junit:latest
+    - rebuild:latest
+  resources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+    limits:
+      cpu: 1
+      memory: 2Gi
+  containerEnv:
+    - name: EXAMPLE_ENV
+      value: "example-value"
+  javaOpts: >-
+    -Xms512m -Xmx2g
+  serviceAnnotations:
+    example-annotation: "true"
+  replicaCount: 1
+agent:
+  enabled: true
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+persistence:
+  enabled: false
+rbac:
+  create: true
