@@ -6,19 +6,57 @@ controller:
     password: admin
   serviceType: ClusterIP
   installPlugins:
-    - kubernetes:latest
     - workflow-aggregator:latest
+    - workflow-job:latest
+    - workflow-cps:latest
+    - pipeline-stage-view:latest
+    - pipeline-graph-analysis:latest
+    - pipeline-model-definition:latest
+    - kubernetes:latest
+    - kubernetes-credentials-provider:latest
     - configuration-as-code:latest
+    - configuration-as-code-groovy:latest
     - job-dsl:latest
+    - role-strategy:latest
+    - matrix-auth:latest
+    - authorize-project:latest
+    - oic-auth:latest
     - git:latest
     - github:latest
+    - github-branch-source:latest
+    - cloudbees-bitbucket-branch-source:latest
     - docker-workflow:latest
+    - docker-plugin:latest
+    - docker-commons:latest
     - credentials:latest
-#    - prometheus:latest
+    - credentials-binding:latest
+    - plain-credentials:latest
+    - ssh-credentials:latest
+    - maven-plugin:latest
+    - gradle:latest
+    - prometheus:latest
+    - pipeline-utility-steps:latest
+    - ansicolor:latest
+    - timestamper:latest
+    - ws-cleanup:latest
+    - build-timeout:latest
+    - copyartifact:latest
     - email-ext:latest
     - slack:latest
+    - http_request:latest
+    - blueocean:latest
+    - dashboard-view:latest
+    - build-monitor-plugin:latest
+    - simple-theme-plugin:latest
+    - kubernetes-cd:latest
+    - pipeline-aws:latest
     - junit:latest
+    - jacoco:latest
+    - warnings-ng:latest
     - rebuild:latest
+    - build-name-setter:latest
+    - description-setter:latest
+
   resources:
     requests:
       cpu: 200m
