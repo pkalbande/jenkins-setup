@@ -86,7 +86,7 @@ persistence:
   size: 8Gi
 rbac:
   create: true
-    readSecrets: true
+  readSecrets: true
 
 # JCasC configuration
 controller:
@@ -107,8 +107,8 @@ controller:
         jenkins:
           securityRealm:
             oic:
-                clientId: "${OIDC_CLIENT_ID}"
-                clientSecret: "${OIDC_CLIENT_SECRET}"
+              clientId: "${OIDC_CLIENT_ID}"
+              clientSecret: "${OIDC_CLIENT_SECRET}"
               disableSslVerification: false
 
 
