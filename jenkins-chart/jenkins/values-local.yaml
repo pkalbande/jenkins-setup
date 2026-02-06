@@ -121,74 +121,68 @@ controller:
                   ssh:
                     host: "agent1.example.com"
                     credentialsId: "ssh-credentials"
-        cli:
-          enabled: false
-
-        tools:
-          jdk:
-            installations:
-              - name: "JDK11"
-                home: "/usr/lib/jvm/java-11-openjdk"
-          maven:
-            installations:
-              - name: "Maven3"
-                home: "/usr/share/maven"
-
-        jobs:
-          - script: |
-              // Seed job creation using Job DSL
-              job('seed-job') {
-                description('This job creates other jobs from DSL scripts in the repo')
-                scm {
-                  git {
-                    remote {
-                      url('https://github.com/your-org/your-repo.git')
+          cli:
+            enabled: false
+          tools:
+            jdk:
+              installations:
+                - name: "JDK11"
+                  home: "/usr/lib/jvm/java-11-openjdk"
+            maven:
+              installations:
+                - name: "Maven3"
+                  home: "/usr/share/maven"
+          jobs:
+            - script: |
+                // Seed job creation using Job DSL
+                job('seed-job') {
+                  description('This job creates other jobs from DSL scripts in the repo')
+                  scm {
+                    git {
+                      remote {
+                        url('https://github.com/your-org/your-repo.git')
+                      }
+                      branch('main')
                     }
-                    branch('main')
+                  }
+                  steps {
+                    dsl {
+                      external('jobs/**/*.groovy')
+                    }
                   }
                 }
-                steps {
-                  dsl {
-                    external('jobs/**/*.groovy')
-                  }
-                }
-              }
-
-        credentials:
-          system:
-            domainCredentials:
-              - credentials:
-                  - usernamePassword:
-                      scope: GLOBAL
-                      id: "github-credentials"
-                      username: "your-username"
-                      password: "your-token"
-
-        unclassified:
-          mailer:
-            smtpHost: "smtp.example.com"
-            smtpPort: "587"
-            useSsl: true
-            smtpAuthUsername: "user"
-            smtpAuthPassword: "password"
-            replyToAddress: "jenkins@example.com"
-          globalLibraries:
-            libraries:
-              - name: "my-shared-library"
-                defaultVersion: "main"
-                retriever:
-                  modernSCM:
-                    scm:
-                      git:
-                        remote: "https://github.com/your-org/your-shared-library.git"
-                        credentialsId: "github-credentials"
-
-        security:
-          persistence:
-            enabled: true
-            storageClass: "standard"
-            size: "8Gi"
-agent:
+          credentials:
+            system:
+              domainCredentials:
+                - credentials:
+                    - usernamePassword:
+                        scope: GLOBAL
+                        id: "github-credentials"
+                        username: "your-username"
+                        password: "your-token"
+          unclassified:
+            mailer:
+              smtpHost: "smtp.example.com"
+              smtpPort: "587"
+              useSsl: true
+              smtpAuthUsername: "user"
+              smtpAuthPassword: "password"
+              replyToAddress: "jenkins@example.com"
+            globalLibraries:
+              libraries:
+                - name: "my-shared-library"
+                  defaultVersion: "main"
+                  retriever:
+                    modernSCM:
+                      scm:
+                        git:
+                          remote: "https://github.com/your-org/your-shared-library.git"
+                          credentialsId: "github-credentials"
+          security:
+            persistence:
+              enabled: true
+              storageClass: "standard"
+              size: "8Gi"
   enabled: true
   resources:
     requests:
