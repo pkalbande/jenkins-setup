@@ -76,7 +76,7 @@ controller:
       full-config: |
         jenkins:
           securityRealm:
-            hudson.security.HudsonPrivateSecurityRealm:
+            HudsonPrivateSecurityRealm:
               users:
                 - id: "admin"
                   password: "admin"
