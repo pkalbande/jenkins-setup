@@ -56,7 +56,6 @@ controller:
     - rebuild:latest
     - build-name-setter:latest
     - description-setter:latest
-
   resources:
     requests:
       cpu: 200m
@@ -72,6 +71,92 @@ controller:
   serviceAnnotations:
     example-annotation: "true"
   replicaCount: 1
+  JCasC:
+    configScripts:
+      full-config: |
+        jenkins:
+          securityRealm:
+            hudson.security.HudsonPrivateSecurityRealm:
+              users:
+                - id: "admin"
+                  password: "admin"
+          authorizationStrategy:
+            hudson.security.FullControlOnceLoggedInAuthorizationStrategy:
+              allowAnonymousRead: false
+          disableCli: true
+          globalNodeProperties:
+            - envVars:
+                env:
+                  - key: "EXAMPLE_ENV"
+                    value: "example-value"
+          tools:
+            jdk:
+              installations:
+                - name: "JDK11"
+                  home: "/usr/lib/jvm/java-11-openjdk"
+            maven:
+              installations:
+                - name: "Maven3"
+                  home: "/usr/share/maven"
+          jobs:
+            - script: |
+                // Seed job creation using Job DSL
+                job('seed-job') {
+                  description('This job creates other jobs from DSL scripts in the repo')
+                  scm {
+                    git {
+                      remote {
+                        url('https://github.com/your-org/your-repo.git')
+                      }
+                      branch('main')
+                    }
+                  }
+                  steps {
+                    dsl {
+                      external('jobs/**/*.groovy')
+                    }
+                  }
+                }
+          nodes:
+            - permanent:
+                name: "agent1"
+                remoteFS: "/home/jenkins"
+                launcher:
+                  ssh:
+                    host: "agent1.example.com"
+                    credentialsId: "ssh-credentials"
+          credentials:
+            system:
+              domainCredentials:
+                - credentials:
+                    - usernamePassword:
+                        scope: GLOBAL
+                        id: "github-credentials"
+                        username: "your-username"
+                        password: "your-token"
+          unclassified:
+            mailer:
+              smtpHost: "smtp.example.com"
+              smtpPort: "587"
+              useSsl: true
+              smtpAuthUsername: "user"
+              smtpAuthPassword: "password"
+              replyToAddress: "jenkins@example.com"
+            globalLibraries:
+              libraries:
+                - name: "my-shared-library"
+                  defaultVersion: "main"
+                  retriever:
+                    modernSCM:
+                      scm:
+                        git:
+                          remote: "https://github.com/your-org/your-shared-library.git"
+                          credentialsId: "github-credentials"
+          security:
+            persistence:
+              enabled: true
+              storageClass: "standard"
+              size: "8Gi"
 agent:
   enabled: true
   resources:
@@ -87,43 +172,3 @@ persistence:
 rbac:
   create: true
   readSecrets: true
-
-# JCasC configuration
-controller:
-  containerEnv:
-    - name: OIDC_CLIENT_ID
-      valueFrom:
-        secretKeyRef:
-          name: jenkins-google-oauth
-          key: clientId
-    - name: OIDC_CLIENT_SECRET
-      valueFrom:
-        secretKeyRef:
-          name: jenkins-google-oauth
-          key: clientSecret
-  JCasC:
-    configScripts:
-      google-sso: |
-        jenkins:
-          securityRealm:
-            org.jenkinsci.plugins.oic.OicSecurityRealm:
-              clientId: "${OIDC_CLIENT_ID}"
-              clientSecret: "${OIDC_CLIENT_SECRET}"
-              wellKnownOpenIDConfigurationUrl: "${OIDC_ISSUER_URL}/.well-known/openid-configuration"
-              tokenServerUrl: "${OIDC_ISSUER_URL}/token"
-              authorizationServerUrl: "${OIDC_ISSUER_URL}/authorize"
-              userInfoServerUrl: "${OIDC_ISSUER_URL}/userinfo"
-              userNameField: "email"
-              tokenAuthEnabled: false
-              emailField: "email"
-              fullNameFieldName: "name"
-              groupsFieldName: "groups"
-              disableSslVerification: false
-              logoutFromOpenidProvider: true
-              postLogoutRedirectUrl: ""
-              escapeHatchEnabled: false
-              escapeHatchUsername: ""
-              escapeHatchSecret: ""
-              escapeHatchGroup: ""
-
-
