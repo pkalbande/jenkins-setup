@@ -4,25 +4,15 @@ controller:
     password: admin
 
   serviceType: ClusterIP
-  replicaCount: 1
-
+  
   installPlugins:
-    - workflow-aggregator
-    - pipeline-model-definition
-    - job-dsl
-    - configuration-as-code
-    - git
-    - github-branch-source
-    - credentials-binding
-    - ssh-credentials
-    - copyartifact
-    - pipeline-utility-steps
-    - ansicolor
-    - timestamper
-    - ws-cleanup
-    - blueocean
-    - slack
-    - pipeline-aws
+    - workflow-aggregator:latest
+    - pipeline-model-definition:latest
+    - job-dsl:latest
+    - configuration-as-code:latest
+    - git:latest
+    - github-branch-source:latest
+    - credentials-binding:latest
 
   resources:
     requests:
@@ -32,62 +22,41 @@ controller:
       cpu: 1
       memory: 2Gi
 
-  javaOpts: "-Xms512m -Xmx2g"
-
-  containerEnv:
-    - name: EXAMPLE_ENV
-      value: "example-value"
-
-  # ---------------------------
-  # Jenkins Configuration as Code (SAFE)
-  # ---------------------------
   JCasC:
     defaultConfig: false
     configScripts:
-      jenkins-config: |
+      welcome-message: |
+        jenkins:
+          systemMessage: "Jenkins configured using Helm and JCasC"
+      main-config: |
         jenkins:
           numExecutors: 2
           mode: NORMAL
           securityRealm:
             local:
               allowsSignup: false
-              users:
-                - id: admin
-                  password: admin
           authorizationStrategy:
             loggedInUsersCanDoAnything:
               allowAnonymousRead: false
-          globalNodeProperties:
-            - envVars:
-                env:
-                  - key: EXAMPLE_ENV
-                    value: example-value
-          credentials:
-            system:
-              domainCredentials:
-                - credentials:
-                    - usernamePassword:
-                        id: github-credentials
-                        username: your-username
-                        password: your-token
-          jobs:
-            - script: |
-                job('seed-job') {
-                  description('Creates deployment jobs using Job DSL')
-                  scm {
-                    git {
-                      remote {
-                        url('https://github.com/your-org/your-repo.git')
-                      }
-                      branch('main')
-                    }
-                  }
-                  steps {
-                    dsl {
-                      external('jobs/**/*.groovy')
-                    }
-                  }
+        credentials:
+          system:
+            domainCredentials:
+              - credentials:
+                  - usernamePassword:
+                      scope: GLOBAL
+                      id: github-credentials
+                      username: your-username
+                      password: your-token
+                      description: GitHub Credentials
+      jobs-config: |
+        jobs:
+          - script: >
+              job('seed-job') {
+                description('Seed job to create other jobs')
+                steps {
+                  shell('echo "Hello from seed job"')
                 }
+              }
 
 persistence:
   enabled: true
