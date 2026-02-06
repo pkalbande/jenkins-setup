@@ -1,61 +1,29 @@
-# Basic Jenkins Helm values.yaml for local ArgoCD deployment
-
 controller:
   admin:
     username: admin
     password: admin
+
   serviceType: ClusterIP
+  replicaCount: 1
+
   installPlugins:
-    - workflow-aggregator:latest
-    - workflow-job:latest
-    - workflow-cps:latest
-    - pipeline-stage-view:latest
-    - pipeline-graph-analysis:latest
-    - pipeline-model-definition:latest
-    - kubernetes:latest
-    - kubernetes-credentials-provider:latest
-    - configuration-as-code:latest
-    - configuration-as-code-groovy:latest
-    - job-dsl:latest
-    - role-strategy:latest
-    - matrix-auth:latest
-    - authorize-project:latest
-    - oic-auth:latest
-    - git:latest
-    - github:latest
-    - github-branch-source:latest
-    - cloudbees-bitbucket-branch-source:latest
-    - docker-workflow:latest
-    - docker-plugin:latest
-    - docker-commons:latest
-    - credentials:latest
-    - credentials-binding:latest
-    - plain-credentials:latest
-    - ssh-credentials:latest
-    - maven-plugin:latest
-    - gradle:latest
-    - prometheus:latest
-    - pipeline-utility-steps:latest
-    - ansicolor:latest
-    - timestamper:latest
-    - ws-cleanup:latest
-    - build-timeout:latest
-    - copyartifact:latest
-    - email-ext:latest
-    - slack:latest
-    - http_request:latest
-    - blueocean:latest
-    - dashboard-view:latest
-    - build-monitor-plugin:latest
-    - simple-theme-plugin:latest
-    - kubernetes-cd:latest
-    - pipeline-aws:latest
-    - junit:latest
-    - jacoco:latest
-    - warnings-ng:latest
-    - rebuild:latest
-    - build-name-setter:latest
-    - description-setter:latest
+    - workflow-aggregator
+    - pipeline-model-definition
+    - job-dsl
+    - configuration-as-code
+    - git
+    - github-branch-source
+    - credentials-binding
+    - ssh-credentials
+    - copyartifact
+    - pipeline-utility-steps
+    - ansicolor
+    - timestamper
+    - ws-cleanup
+    - blueocean
+    - slack
+    - pipeline-aws
+
   resources:
     requests:
       cpu: 200m
@@ -63,113 +31,72 @@ controller:
     limits:
       cpu: 1
       memory: 2Gi
+
+  javaOpts: "-Xms512m -Xmx2g"
+
   containerEnv:
     - name: EXAMPLE_ENV
       value: "example-value"
-  javaOpts: >-
-    -Xms512m -Xmx2g
-  serviceAnnotations:
-    example-annotation: "true"
-  replicaCount: 1
+
+  # ---------------------------
+  # Jenkins Configuration as Code (SAFE)
+  # ---------------------------
   JCasC:
     configScripts:
-      full-config: |
+      jenkins-config: |
         jenkins:
+          numExecutors: 2
+          mode: NORMAL
+
           securityRealm:
-            HudsonPrivateSecurityRealm:
+            local:
+              allowsSignup: false
               users:
-                - id: "admin"
-                  password: "admin"
+                - id: admin
+                  password: admin
+
           authorizationStrategy:
-            globalMatrix:
-              permissions:
-                - "Overall/Administer:authenticated"
+            loggedInUsersCanDoAnything:
+              allowAnonymousRead: false
+
           globalNodeProperties:
             - envVars:
                 env:
-                  - key: "EXAMPLE_ENV"
-                    value: "example-value"
-          nodes:
-            - permanent:
-                name: "agent1"
-                remoteFS: "/home/jenkins"
-                launcher:
-                  ssh:
-                    host: "agent1.example.com"
-                    credentialsId: "ssh-credentials"
-          cli:
-            enabled: false
-          tools:
-            jdk:
-              installations:
-                - name: "JDK11"
-                  home: "/usr/lib/jvm/java-11-openjdk"
-            maven:
-              installations:
-                - name: "Maven3"
-                  home: "/usr/share/maven"
-          jobs:
-            - script: |
-                // Seed job creation using Job DSL
-                job('seed-job') {
-                  description('This job creates other jobs from DSL scripts in the repo')
-                  scm {
-                    git {
-                      remote {
-                        url('https://github.com/your-org/your-repo.git')
-                      }
-                      branch('main')
+                  - key: EXAMPLE_ENV
+                    value: example-value
+
+        credentials:
+          system:
+            domainCredentials:
+              - credentials:
+                  - usernamePassword:
+                      id: github-credentials
+                      username: your-username
+                      password: your-token
+
+        jobs:
+          - script: |
+              job('seed-job') {
+                description('Creates deployment jobs using Job DSL')
+                scm {
+                  git {
+                    remote {
+                      url('https://github.com/your-org/your-repo.git')
                     }
-                  }
-                  steps {
-                    dsl {
-                      external('jobs/**/*.groovy')
-                    }
+                    branch('main')
                   }
                 }
-          credentials:
-            system:
-              domainCredentials:
-                - credentials:
-                    - usernamePassword:
-                        scope: GLOBAL
-                        id: "github-credentials"
-                        username: "your-username"
-                        password: "your-token"
-          unclassified:
-            mailer:
-              smtpHost: "smtp.example.com"
-              smtpPort: "587"
-              useSsl: true
-              smtpAuthUsername: "user"
-              smtpAuthPassword: "password"
-              replyToAddress: "jenkins@example.com"
-            globalLibraries:
-              libraries:
-                - name: "my-shared-library"
-                  defaultVersion: "main"
-                  retriever:
-                    modernSCM:
-                      scm:
-                        git:
-                          remote: "https://github.com/your-org/your-shared-library.git"
-                          credentialsId: "github-credentials"
-          security:
-            persistence:
-              enabled: true
-              storageClass: "standard"
-              size: "8Gi"
-  enabled: true
-  resources:
-    requests:
-      cpu: 100m
-      memory: 256Mi
-    limits:
-      cpu: 500m
-      memory: 1Gi
+                steps {
+                  dsl {
+                    external('jobs/**/*.groovy')
+                  }
+                }
+              }
+
 persistence:
   enabled: true
   size: 8Gi
+
 rbac:
   create: true
   readSecrets: true
