@@ -80,10 +80,10 @@ controller:
               users:
                 - id: "admin"
                   password: "admin"
-            authorizationStrategy:
-              globalMatrix:
-                permissions:
-                  - "Overall/Administer:authenticated"
+          authorizationStrategy:
+            globalMatrix:
+              permissions:
+                - "Overall/Administer:authenticated"
           disableCli: true
           globalNodeProperties:
             - envVars:
