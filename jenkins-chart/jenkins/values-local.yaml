@@ -42,6 +42,7 @@ controller:
   # Jenkins Configuration as Code (SAFE)
   # ---------------------------
   JCasC:
+    defaultConfig: false
     configScripts:
       jenkins-config: |
         jenkins:
