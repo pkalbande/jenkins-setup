@@ -84,7 +84,6 @@ controller:
             globalMatrix:
               permissions:
                 - "Overall/Administer:authenticated"
-          disableCli: true
           globalNodeProperties:
             - envVars:
                 env:
