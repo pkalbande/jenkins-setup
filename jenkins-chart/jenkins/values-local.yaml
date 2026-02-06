@@ -80,9 +80,10 @@ controller:
               users:
                 - id: "admin"
                   password: "admin"
-          authorizationStrategy:
-            hudson.security.FullControlOnceLoggedInAuthorizationStrategy:
-              allowAnonymousRead: false
+            authorizationStrategy:
+              globalMatrix:
+                permissions:
+                  - "Overall/Administer:authenticated"
           disableCli: true
           globalNodeProperties:
             - envVars:
