@@ -97,30 +97,6 @@ controller:
                   ssh:
                     host: "agent1.example.com"
                     credentialsId: "ssh-credentials"
-
-        jenkins:
-          securityRealm:
-            HudsonPrivateSecurityRealm:
-              users:
-                - id: "admin"
-                  password: "admin"
-          authorizationStrategy:
-            globalMatrix:
-              permissions:
-                - "Overall/Administer:authenticated"
-          globalNodeProperties:
-            - envVars:
-                env:
-                  - key: "EXAMPLE_ENV"
-                    value: "example-value"
-          nodes:
-            - permanent:
-                name: "agent1"
-                remoteFS: "/home/jenkins"
-                launcher:
-                  ssh:
-                    host: "agent1.example.com"
-                    credentialsId: "ssh-credentials"
           cli:
             enabled: false
           tools:
