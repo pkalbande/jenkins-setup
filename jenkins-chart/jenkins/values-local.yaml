@@ -2,6 +2,7 @@ controller:
   admin:
     username: admin
     password: admin
+    createSecret: true
 
   serviceType: ClusterIP
   
@@ -16,6 +17,9 @@ controller:
     - git:latest
     - github-branch-source:latest
     - credentials-binding:latest
+    - google-login:latest
+    - matrix-auth:latest
+    - role-strategy:latest
 
   resources:
     requests:
@@ -27,20 +31,33 @@ controller:
 
   javaOpts: "-Djenkins.install.runSetupWizard=false"
 
+  additionalExistingSecrets:
+    - name: google-oauth-secret
+      keyName: client-id
+    - name: google-oauth-secret
+      keyName: client-secret
+
   JCasC:
     defaultConfig: false
     configScripts:
       jenkins-casc-config: |
         jenkins:
-          systemMessage: "Jenkins configured using Helm and JCasC"
+          systemMessage: "Jenkins configured using Helm and JCasC with Google SSO"
           numExecutors: 2
           mode: NORMAL
           securityRealm:
-            local:
-              allowsSignup: false
+            googleOAuth2:
+              clientId: "${google-oauth-secret-client-id}"
+              clientSecret: "${google-oauth-secret-client-secret}"
+              domain: "yourdomain.com"
           authorizationStrategy:
-            loggedInUsersCanDoAnything:
-              allowAnonymousRead: false
+            projectMatrix:
+              permissions:
+                - "Overall/Administer:admin"
+                - "Overall/Administer:user@yourdomain.com"
+                - "Overall/Read:authenticated"
+                - "Job/Build:authenticated"
+                - "Job/Read:authenticated"
         credentials:
           system:
             domainCredentials:
