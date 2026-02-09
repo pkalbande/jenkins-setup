@@ -5,6 +5,9 @@ controller:
 
   serviceType: ClusterIP
   
+  installLatestPlugins: false
+  installLatestSpecifiedPlugins: false
+  
   installPlugins:
     - workflow-aggregator:latest
     - pipeline-model-definition:latest
@@ -22,14 +25,14 @@ controller:
       cpu: 1
       memory: 2Gi
 
+  javaOpts: "-Djenkins.install.runSetupWizard=false"
+
   JCasC:
     defaultConfig: false
     configScripts:
-      welcome-message: |
+      jenkins-casc-config: |
         jenkins:
           systemMessage: "Jenkins configured using Helm and JCasC"
-      main-config: |
-        jenkins:
           numExecutors: 2
           mode: NORMAL
           securityRealm:
@@ -48,7 +51,6 @@ controller:
                       username: your-username
                       password: your-token
                       description: GitHub Credentials
-      jobs-config: |
         jobs:
           - script: >
               job('seed-job') {
